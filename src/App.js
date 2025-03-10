@@ -1,25 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import Login from "../src/Components/Login.js";
+import AdminDashboard from "./Components/Admindashboard.js";
+import Usersaleform from "./Components/Usersaleform.js";
+import Checkout from "./Components/Checkout.js";
+import Salesdetails from  "./Components/Salesdetails.js"
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/adminboard" element={<AdminDashboard />} />
+      <Route path="/salesboard" element={<Usersaleform />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/salesdetails/:salesmanId" element={<Salesdetails />} />
+    </Routes>
   );
-}
+};
 
 export default App;
