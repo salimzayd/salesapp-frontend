@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import stance from "../interceptors/interceptors";
 
 const Checkout = () => {
   const [sales, setSales] = useState([]);
@@ -22,8 +23,8 @@ const Checkout = () => {
               return;
             }
       
-            const response = await axios.get(
-                `http://localhost:5000/api/sales/salesform/${salesmanId}`,
+            const response = await stance.get(
+                `/api/sales/salesform/${salesmanId}`,
                 {
                 headers: {
                   Authorization: `Bearer ${token}`, // Send token in the request header

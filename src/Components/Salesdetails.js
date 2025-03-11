@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import stance from "../interceptors/interceptors";
 
 const SalesDetails = () => {
   const [sales, setSales] = useState([]);
@@ -22,8 +23,8 @@ const SalesDetails = () => {
 
         console.log("Fetching sales for Salesman ID:", salesmanId);
 
-        const response = await axios.get(
-          `http://localhost:5000/api/admin/salesmen/${salesmanId}/sales`,
+        const response = await stance.get(
+          `/api/admin/salesmen/${salesmanId}/sales`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

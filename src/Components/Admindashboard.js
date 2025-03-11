@@ -4,6 +4,7 @@ import axios from "axios";
 import { CiSquarePlus } from "react-icons/ci";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
+import stance from "../interceptors/interceptors";
 import "./Admindashboard.css";
 
 const AdminDashboard = () => {
@@ -59,13 +60,12 @@ const AdminDashboard = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem("token");
             const [customersRes, productsRes, salesmenRes] = await Promise.all([
-                axios.get("http://localhost:5000/api/admin/customers", { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get("http://localhost:5000/api/admin/products", { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get("http://localhost:5000/api/admin/salesmen", { headers: { Authorization: `Bearer ${token}` } }),
+                stance.get("/api/admin/customers"),
+                stance.get("/api/admin/products"),
+                stance.get("/api/admin/salesmen"),
             ]);
-
+    
             setCustomers(customersRes.data);
             setProducts(productsRes.data);
             setSalesmen(salesmenRes.data);
@@ -73,6 +73,7 @@ const AdminDashboard = () => {
             console.error("Error fetching data:", error);
         }
     };
+    
 
     useEffect(() => {
         fetchData();
@@ -87,8 +88,7 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post(
-                "http://localhost:5000/api/admin/customers",
+            await stance.post("/api/admin/customers",
                 {
                     name: customform.name,
                     email: customform.email,
@@ -109,14 +109,13 @@ const AdminDashboard = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/admin/customers/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
-            fetchData();
+            await stance.delete(`/api/admin/customers/${id}`);
+            fetchData(); // Refresh data after deletion
         } catch (error) {
             console.error("Error deleting customer:", error);
         }
     };
+    
 
     const handleEditClick = (customer) => {
         setSelectedCustomer(customer);
@@ -132,18 +131,12 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.put(
-                `http://localhost:5000/api/admin/customers/${selectedCustomer._id}`,
-                selectedCustomer,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            fetchData();
+            await stance.put(`/api/admin/customers/${selectedCustomer._id}`, selectedCustomer);
+            fetchData(); // Refresh data after update
             setEditModal(false);
             setSelectedCustomer(null);
         } catch (error) {
-            console.error("Error updating customer", error);
+            console.error("Error updating customer:", error);
         }
     };
 
@@ -156,18 +149,13 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
     
         try {
-            await axios.post(
-                "http://localhost:5000/api/admin/products",
-                {
-                    name: productform.name,
-                    price: parseFloat(productform.price),
-                    discountPercentage: parseFloat(productform.discountPercentage),
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            fetchData();
+            await stance.post("/api/admin/products", {
+                name: productform.name,
+                price: parseFloat(productform.price),
+                discountPercentage: parseFloat(productform.discountPercentage),
+            });
+        
+            fetchData(); // Refresh the data after adding a product
             setProductmodal(false);
             setProductform({ name: "", price: "", discountPercentage: "" });
         } catch (error) {
@@ -177,14 +165,13 @@ const AdminDashboard = () => {
     
     const handleProductDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/admin/products/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
-            fetchData();
+            await stance.delete(`/api/admin/products/${id}`);
+            fetchData(); // Refresh data after deletion
         } catch (error) {
             console.error("Error deleting product:", error);
         }
     };
+    
     
     const handleProductEditClick = (product) => {
         setSelectedproduct(product);
@@ -200,18 +187,12 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
     
         try {
-            await axios.put(
-                `http://localhost:5000/api/admin/products/${selectedproduct._id}`,
-                selectedproduct,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            fetchData();
+            await stance.put(`/api/admin/products/${selectedproduct._id}`, selectedproduct);
+            fetchData(); // Refresh data after update
             setPreditmodal(false);
             setSelectedproduct(null);
         } catch (error) {
-            console.error("Error updating product", error);
+            console.error("Error updating product:", error);
         }
     };
 
@@ -225,32 +206,20 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post(
-                "http://localhost:5000/api/admin/salesmen",
-                {
-                    name: salesmanForm.name,
-                    email: salesmanForm.email,
-                    phonenumber: parseInt(salesmanForm.phonenumber, 10),
-                    age: parseInt(salesmanForm.age, 10),
-                    place: salesmanForm.place,
-                    password:salesmanForm.password
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-                
-            );
-            console.log("Salesman Form Data:", {
+            await stance.post("/api/admin/salesmen", {
                 name: salesmanForm.name,
                 email: salesmanForm.email,
                 phonenumber: parseInt(salesmanForm.phonenumber, 10),
                 age: parseInt(salesmanForm.age, 10),
                 place: salesmanForm.place,
-                password:salesmanForm.password
+                password: salesmanForm.password
             });
-            fetchData();
+        
+            console.log("Salesman Form Data:", salesmanForm);
+            
+            fetchData(); // Refresh data after adding
             setSalesmanModal(false);
-            setSalesmanForm({ name: "", email: "", phonenumber: "", age: "", place: "",password:"" });
+            setSalesmanForm({ name: "", email: "", phonenumber: "", age: "", place: "", password: "" });
         } catch (error) {
             console.error("Error adding salesman", error);
         }
@@ -258,14 +227,13 @@ const AdminDashboard = () => {
 
     const handleSalesmanDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/admin/salesmen/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-            });
-            fetchData();
+            await stance.delete(`/api/admin/salesmen/${id}`);
+            fetchData(); // Refresh data after deletion
         } catch (error) {
             console.error("Error deleting salesman:", error);
         }
     };
+        
 
     const handleSalesmanEditClick = (salesman) => {
         setSelectedSalesman(salesman);
@@ -281,13 +249,7 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.put(
-                `http://localhost:5000/api/admin/salesmen/${selectedSalesman._id}`,
-                selectedSalesman,
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+            await stance.put(`/api/admin/salesmen/${selectedSalesman._id}`, selectedSalesman);
             fetchData();
             setSalesmanEditModal(false);
             setSelectedSalesman(null);
@@ -295,7 +257,6 @@ const AdminDashboard = () => {
             console.error("Error updating salesman", error);
         }
     };
-    
 
     return (
         <div className="dashboard-wrapper">
@@ -521,5 +482,5 @@ const AdminDashboard = () => {
         </div>
     );
 };
-
+    
 export default AdminDashboard;

@@ -3,6 +3,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Corrected import
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import stance from "../interceptors/interceptors";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -20,11 +21,11 @@ const Login = () => {
         setMessage("");
 
         const endpoint = role === "admin"
-            ? "http://localhost:5000/api/admin/login"
-            : "http://localhost:5000/api/sales/login";
+            ? "/api/admin/login"
+            : "/api/sales/login";
 
         try {
-            const response = await axios.post(endpoint, { email, password }, {
+            const response = await stance.post(endpoint, { email, password }, {
                 headers: { "Content-Type": "application/json" }
             });
 

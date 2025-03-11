@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import stance from "../interceptors/interceptors";
 
 const SalesForm = () => {
   const navigate = useNavigate();
@@ -31,8 +32,8 @@ const SalesForm = () => {
     if (query.length > 0) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:5000/api/sales/search/customers?name=${query}`,
+        const response = await stance.get(
+          `/api/sales/search/customers?name=${query}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setCustomers(response.data);
@@ -46,8 +47,8 @@ const SalesForm = () => {
     if (query.length > 0) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:5000/api/sales/search/products?name=${query}`,
+        const response = await stance.get(
+          `/api/sales/search/products?name=${query}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setProducts(response.data);
@@ -124,7 +125,7 @@ const SalesForm = () => {
       console.log("Request Data:", requestData); // Debugging log before sending
   
       // Send POST request
-      const response = await axios.post("http://localhost:5000/api/sales/salesform", requestData, {
+      const response = await stance.post("/api/sales/salesform", requestData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
   
